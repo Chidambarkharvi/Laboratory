@@ -3,10 +3,11 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/dataSchema");
 
 const Authenticate = async (req, res, next) => {
+  console.log("terrrr");
   try {
     console.log("try");
     const token = req.cookies.jwtoken;
-    const verifyToken = jwt.verify(token, process.env.SECRET_KEY, {
+    const verifyToken = jwt.verify(token.token, process.env.SECRET_KEY, {
       complete: true,
     });
 
@@ -14,13 +15,12 @@ const Authenticate = async (req, res, next) => {
       _id: verifyToken.payload._id /* ,"tokens.token":token */,
     });
     const allUser = await User.find({ role: "User" });
-  
+    console.log(allUser, "fwfrferf");
 
     const userData = [rootUser];
     const allUserData = [...allUser];
 
     if (rootUser.role === "Admin") {
-      //   req.rootUser = [...allUserData];
       res.json(allUserData);
     } else if (rootUser.role === "User") {
       res.json(userData);
@@ -30,14 +30,11 @@ const Authenticate = async (req, res, next) => {
       throw new Error("user not found");
     }
 
-    // req.token = token
-    // req.rootUser = UserArray
-    // req.user = rootUser._id;
     next();
   } catch (err) {
     console.log("catch");
     res.status(401).json("user is not authenticated");
-    console.log(err);
+    console.log(err, "jwt error error =>");
   }
 };
 

@@ -10,7 +10,8 @@ const heamatology = mongoose.Schema({
   wbc: { type: String },
   lymphocytes: { type: String },
   monocytes: { type: String },
-  rbc: { type: String },
+  RBC: { type: String },
+  MCV: { type: String },
 });
 
 const glucometry = new mongoose.Schema({
@@ -32,16 +33,16 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   date: { type: String },
   role: { type: String },
-  status: [
-    {
-      hemo: { type: Boolean },
-      thyr: { type: Boolean },
-      glu: { type: Boolean },
-    },
-  ],
-  heamatology: [heamatology],
-  glucometry: [glucometry],
-  Thyroid: [Thyroid],
+  // status: [
+  //   {
+  //     hemo: { type: Boolean },
+  //     thyr: { type: Boolean },
+  //     glu: { type: Boolean },
+  //   },
+  // ],
+  heamatology: heamatology,
+  glucometry: glucometry,
+  Thyroid: Thyroid,
   tokens: [
     {
       token: {
@@ -55,6 +56,7 @@ const userSchema = new mongoose.Schema({
 //token generation
 
 userSchema.methods.generateAuthToken = async function () {
+  console.log("dhjshfdsjk>");
   try {
     let token = jwt.sign(
       {

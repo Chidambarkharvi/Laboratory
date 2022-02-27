@@ -67,10 +67,9 @@ router.post("/login", async (req, res) => {
     }
 
     const userLogin = await User.findOne({ email: email });
-    console.log(userLogin,"users detai")
 
-    token = await userLogin.generateAuthToken();
-    console.log(token,"generated toke");
+    token = await userLogin.tokens[userLogin.tokens.length - 1];
+    console.log(token, "generated ==============>toke");
 
     //storing cookie
     res.cookie("jwtoken", token, {
@@ -81,13 +80,11 @@ router.post("/login", async (req, res) => {
     if (!userLogin || userLogin.password !== password) {
       res.status(400).json({ message: "user error" });
     } else {
-      res
-        .status(200)
-        .json({
-          message: "user signed in successfully",
-          role: userLogin.role,
-          token: userLogin.token,
-        });
+      res.status(200).json({
+        message: "user signed in successfully",
+        role: userLogin.role,
+        token: userLogin.token,
+      });
     }
   } catch (err) {
     console.log(err);
@@ -95,23 +92,17 @@ router.post("/login", async (req, res) => {
 });
 
 //user details
-router.get("/details", authenticate, (req, res) => {
-  res.send(req.rootUser);
-});
+router.get("/details", authenticate, (req, res) => {});
 
+// router.post("/userdetails" , (req, res) => {
+//   let
+// })
 
-router.post("/userdetails" , (req, res) => {
-  let
-})
+router.get("/sample", authenticate, (req, res) => {});
 
-router.get("/sample", authenticate, (req, res) => {
-  res.send(req.rootUser);
-});
-
-router.post("/sample", (req, res) => {
-  console.log(req.body);
-  res.send(req.body);
-});
+// router.post("/sample", (req, res) => {
+//   res.send(req.body);
+// });
 
 //logout
 router.get("/logout", (req, res) => {
@@ -120,44 +111,42 @@ router.get("/logout", (req, res) => {
   res.status(200).send("user logout");
 });
 
-router.post("/admin", async (req, res) => {
+router.post("/entersample", async (req, res) => {
   try {
-    // const { heamatology, glucometry, Thyroid } = req.body;
-    const heamatology = req.body.heamatology
-    const glucometry = req.body.glucometry
+    const { heamatology, glucometry, Thyroid } = req.body;
 
-    
-
-    console.log(req.body,"req vody");
     const user = new User({
       heamatology: {
-        haemoglobin: heamatology[0].haemoglobin,
-        neutrophils: heamatology[0].neutrophils,
-        eosinophiles: heamatology[0].eosinophiles,
-        basophills: heamatology[0].basophills,
-        pcv: heamatology[0].pcv,
-        wbc: heamatology[0].wbc,
-        lymphocytes: heamatology[0].wbc,
-        monocytes: heamatology[0].lymphocytes,
-        rbc: heamatology[0].rbc,
+        haemoglobin: heamatology?.haemoglobin,
+        neutrophils: heamatology?.neutrophils,
+        eosinophiles: heamatology?.eosinophiles,
+        basophills: heamatology?.basophills,
+        pcv: heamatology?.pcv,
+        wbc: heamatology?.wbc,
+        lymphocytes: heamatology?.wbc,
+        monocytes: heamatology?.lymphocytes,
       },
 
       glucometry: {
-        FBS: glucometry[0].FBS,
-        PPBS: glucometry[0].PPBS,
-        GH: glucometry[0].GH,
-        Calcium: glucometry[0].Calcium,
+        FBS: glucometry?.FBS,
+        PPBS: glucometry?.PPBS,
+        GH: glucometry?.GH,
+        Calcium: glucometry?.Calcium,
       },
 
       Thyroid: {
-        TRI: Thyroid[0].TRI,
-        Thyroxine: Thyroid[0].Thyroxine,
-        TSH: Thyroid[0].TSH,
+        TRI: Thyroid?.TRI,
+        Thyroxine: Thyroid?.Thyroxine,
+        TSH: Thyroid?.TSH,
       },
     });
 
     const userRegister = await user.save();
-    res.json({ message: req.body });
+
+    if (userRegister) {
+      return res.status(200).json({ message: req.body, output: userRegister });
+    }
+    console.log("=======================>", userRegister);
   } catch (err) {
     console.log(err);
   }
