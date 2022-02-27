@@ -112,43 +112,78 @@ router.get("/logout", (req, res) => {
 });
 
 router.post("/entersample", async (req, res) => {
+  const { heamatology, glucometry, thyroid, id, editId } = req.body;
   try {
-    const { heamatology, glucometry, Thyroid } = req.body;
+    // if(heamatology)
+    let updatedUser;
 
-    const user = new User({
-      heamatology: {
-        haemoglobin: heamatology?.haemoglobin,
-        neutrophils: heamatology?.neutrophils,
-        eosinophiles: heamatology?.eosinophiles,
-        basophills: heamatology?.basophills,
-        pcv: heamatology?.pcv,
-        wbc: heamatology?.wbc,
-        lymphocytes: heamatology?.wbc,
-        monocytes: heamatology?.lymphocytes,
-      },
+    if (editId === 1) {
+      updatedUser = await User.updateOne(
+        { _id: id },
+        {
+          $set: {
+            heamatology: {
+              haemoglobin: heamatology?.haemoglobin,
+              neutrophils: heamatology?.neutrophils,
+              eosinophiles: heamatology?.eosinophiles,
+              basophills: heamatology?.basophills,
+              pcv: heamatology?.pcv,
+              wbc: heamatology?.wbc,
+              lymphocytes: heamatology?.wbc,
+              monocytes: heamatology?.lymphocytes,
+              rbc: heamatology?.rbc,
+              mcv: heamatology?.mcv,
+            },
+          },
+        }
+      );
+    } else if (editId === 2) {
+      console.log("2-====>", editId);
+      updatedUser = await User.updateOne(
+        { _id: id },
+        {
+          $set: {
+            glucometry: {
+              fbs: glucometry?.fbs,
+              ppbs: glucometry?.ppbs,
+              gh: glucometry?.gh,
+              calcium: glucometry?.calcium,
+            },
+          },
+        }
+      );
+    } else if (editId === 3) {
+      console.log("3-====>");
 
-      glucometry: {
-        FBS: glucometry?.FBS,
-        PPBS: glucometry?.PPBS,
-        GH: glucometry?.GH,
-        Calcium: glucometry?.Calcium,
-      },
-
-      Thyroid: {
-        TRI: Thyroid?.TRI,
-        Thyroxine: Thyroid?.Thyroxine,
-        TSH: Thyroid?.TSH,
-      },
-    });
-
-    const userRegister = await user.save();
-
-    if (userRegister) {
-      return res.status(200).json({ message: req.body, output: userRegister });
+      updatedUser = await User.updateOne(
+        { _id: id },
+        {
+          $set: {
+            thyroid: {
+              tri: thyroid?.tri,
+              thyroxine: thyroid?.thyroxine,
+              tsh: thyroid?.tsh,
+            },
+          },
+        }
+      );
     }
-    console.log("=======================>", userRegister);
+    // if(glucometry)
+
+    //  if(Thyroid)
+
+    if (updatedUser) {
+      return res.status(200).json({
+        message: "updated successfully ",
+        output: updatedUser,
+      });
+    }
   } catch (err) {
-    console.log(err);
+    console.log("error =======================>", err);
+
+    res
+      .status(500)
+      .json({ details: err.message, message: "Something went wrong" });
   }
 });
 
