@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 
+
 const cookieParser = require("cookie-parser");
 const authenticate = require("../middleware/authenticate");
 
@@ -11,17 +12,16 @@ const User = require("../model/dataSchema");
 
 router.use(cookieParser());
 
+//Home routes
 router.get("/", (req, res) => {
   res.send("home");
 });
 
-router.get("/contact", (req, res) => {
-  res.send("contact  dvme");
-});
 
+
+//register routes
 router.post("/register", async (req, res) => {
   const { name, email, password, role } = req.body;
-
   if ((!name, !email, !password, !role)) {
     return res.status(422).json({
       errors: "Fill the all details",
@@ -30,7 +30,6 @@ router.post("/register", async (req, res) => {
 
   try {
     const userExist = await User.findOne({ email: email });
-
     if (userExist) {
       return res.status(422).json({ error: "User already exists" });
     } else {
@@ -38,7 +37,6 @@ router.post("/register", async (req, res) => {
         name,
         email,
         password,
-
         role,
       });
 
@@ -57,7 +55,6 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    let token;
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -67,9 +64,14 @@ router.post("/login", async (req, res) => {
     }
 
     const userLogin = await User.findOne({ email: email });
+console.log(userLogin._id)
+    let token = jwt.sign(
+      {
+        _id: userLogin._id,
+      },
+      process.env.SECRET_KEY
+    );
 
-    token = await userLogin.tokens[userLogin.tokens.length - 1];
-    console.log(token, "generated ==============>toke");
 
     //storing cookie
     res.cookie("jwtoken", token, {
@@ -83,7 +85,7 @@ router.post("/login", async (req, res) => {
       res.status(200).json({
         message: "user signed in successfully",
         role: userLogin.role,
-        token: userLogin.token,
+        token:token,
       });
     }
   } catch (err) {
@@ -91,18 +93,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//user details
-router.get("/details", authenticate, (req, res) => {});
 
-// router.post("/userdetails" , (req, res) => {
-//   let
-// })
 
-router.get("/sample", authenticate, (req, res) => {});
 
-// router.post("/sample", (req, res) => {
-//   res.send(req.body);
+
+router.get("/details", authenticate, (req, res) => {
+
+});
+
+
+
+// router.get("/sample",  (req, res) => {
+  
+
 // });
+
+
 
 //logout
 router.get("/logout", (req, res) => {
@@ -114,7 +120,6 @@ router.get("/logout", (req, res) => {
 router.post("/entersample", async (req, res) => {
   const { heamatology, glucometry, thyroid, id, editId } = req.body;
   try {
-    // if(heamatology)
     let updatedUser;
 
     if (editId === 1) {
@@ -138,7 +143,6 @@ router.post("/entersample", async (req, res) => {
         }
       );
     } else if (editId === 2) {
-      console.log("2-====>", editId);
       updatedUser = await User.updateOne(
         { _id: id },
         {

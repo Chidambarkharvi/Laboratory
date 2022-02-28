@@ -36,37 +36,8 @@ const userSchema = new mongoose.Schema({
   heamatology: heamatology,
   glucometry: glucometry,
   thyroid: thyroid,
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
 });
 
-//token generation
-
-userSchema.methods.generateAuthToken = async function () {
-  console.log("dhjshfdsjk>");
-  try {
-    let token = jwt.sign(
-      {
-        _id: this._id,
-      },
-      process.env.SECRET_KEY
-    );
-    this.tokens = this.tokens.concat({
-      token: token,
-    });
-    await this.save();
-    console.log(token);
-    return token;
-  } catch (err) {
-    console.log(err);
-  }
-};
 
 const User = mongoose.model("USER", userSchema);
 
