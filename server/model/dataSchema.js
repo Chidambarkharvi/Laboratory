@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
@@ -28,7 +29,6 @@ const thyroid = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   name: { type: String },
-
   email: { type: String },
   password: { type: String },
   date: { type: String },
@@ -40,5 +40,4 @@ const userSchema = new mongoose.Schema({
 
 
 const User = mongoose.model("USER", userSchema);
-
 module.exports = User;
