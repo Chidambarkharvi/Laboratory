@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser");
 require("../db/conn");
 const User = require("../model/dataSchema");
 
-const UserVerification = require("../model/verify")
 router.use(cookieParser());
 
 //register routes
@@ -243,5 +242,4 @@ module.exports = {
   entersample,
   update,
   removeUser,
-  otpVerify
 };

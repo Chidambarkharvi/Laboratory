@@ -11,6 +11,5 @@ router.post("/removeUser", userController.removeUser);
 router.put("/update", userController.update);
 router.get("/logout", userController.logout);
 router.put("/entersample", userController.entersample);
-router.post("/verify",userController.otpVerify)
 
 module.exports = router;
